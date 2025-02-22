@@ -1,0 +1,31 @@
+{ pkgs ? import <nixpkgs> {} }:
+pkgs.dockerTools.buildImage {
+  name = "ollama-railway";
+  tag = "latest";
+
+  # The config block sets up runtime instructions.
+  config = {
+    # Replace this command with the one that starts your app.
+    Cmd = [ "sh" "-c" "exec ./start.sh" ];
+    # Set any environment variables your app needs.
+    Env = [
+      "APP_ENV=production"
+      # Add additional environment variables as needed.
+    ];
+  };
+
+  # Specify a base image. In this example, we’re using a slim Python image.
+  fromImage = pkgs.dockerTools.pullImage {
+    imageName = "python";
+    imageTag = "3.9-slim";
+  };
+
+  # Contents lists packages and other dependencies that your app requires.
+  contents = [
+    pkgs.python39
+    pkgs.python39Packages.pip
+    # Include additional packages if your app needs them, for example:
+    # pkgs.git
+    # pkgs.nodejs
+  ];
+}
